@@ -1,8 +1,8 @@
 # watchy-chess-face
 
-Chess display for watchy. 
+Chess display for [Watchy](https://watchy.sqfmi.com/).
 
-Currently just displays https://en.wikipedia.org/wiki/Immortal_Game on repeat, 1 move a minute
+Currently just displays [this game](https://en.wikipedia.org/wiki/Immortal_Game) on repeat, 1 move a minute
 
 Work in progress™
 
