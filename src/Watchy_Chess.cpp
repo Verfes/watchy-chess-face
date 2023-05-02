@@ -26,6 +26,10 @@
 #define PROMOTE_TO_MASK 0xC000u
 #define PROMOTE_TO_OFFSET 14u
 
+#define PROMOTE_TO_KNIGHT 0u
+#define PROMOTE_TO_BISHOP 1u
+#define PROMOTE_TO_ROOK 2u
+#define PROMOTE_TO_QUEEN 3u
 
 
 #define PIECE_TYPE_MASK 0x07u
@@ -141,7 +145,7 @@ void WatchyChess::drawWatchFace()
     uint8_t last_rank;
     uint16_t temp;
 
-    if (move_counter >= 44)
+    if (move_counter >= sizeof(moves)/sizeof(moves[0]))
     {
         memcpy(chess_board, reset_board, 8 * 8);
         move_counter = 0;
@@ -216,12 +220,152 @@ uint16_t WatchyChess::make_move(ChessMove move)
         return (to_file << 8) + to_rank;
     }
     break;
+    case CASTLING:
+    {
+        /* white side castling*/
+        if (from_rank == 0)
+        {
+            /* kingside castling */
+            if (to_file == 6)
+            {
+                chess_board[0][4] = EMPTY << IS_EMPTY_OFFSET;
+                chess_board[0][5] = 8*WHITE+ROOK;
+                chess_board[0][6] = 8*WHITE+KING;
+                chess_board[0][7] = EMPTY << IS_EMPTY_OFFSET;
+                return (6 << 8) + 0;
+            }
+            /* queenside castling */
+            else
+            {
+                chess_board[0][0] = EMPTY << IS_EMPTY_OFFSET;
+                chess_board[0][2] = 8*WHITE+KING;
+                chess_board[0][3] = 8*WHITE+ROOK;
+                chess_board[0][4] = EMPTY << IS_EMPTY_OFFSET;
+                return (2 << 8) + 0;
+            }
+        }
+        /* black side castling */
+        else
+        {
+            /* kingside castling */
+            if (to_file == 6)
+            {
+                chess_board[7][4] = EMPTY << IS_EMPTY_OFFSET;
+                chess_board[7][5] = 8*BLACK+ROOK;
+                chess_board[7][6] = 8*BLACK+KING;
+                chess_board[7][7] = EMPTY << IS_EMPTY_OFFSET;
+                return (6 << 8) + 7;
+            }
+            /* queenside castling */
+            else
+            {
+                chess_board[7][0] = EMPTY << IS_EMPTY_OFFSET;
+                chess_board[7][2] = 8*BLACK+KING;
+                chess_board[7][3] = 8*BLACK+ROOK;
+                chess_board[7][4] = EMPTY << IS_EMPTY_OFFSET;
+                return (2 << 8) + 7;
+            }
+        }
+        // TODO:
+    }
+    break;
+    case EN_PASSANT:
+    {
+        /* white-side en passant */
+        if (from_rank == 4)
+        {
+            chess_board[4][from_file] = EMPTY << IS_EMPTY_OFFSET;
+            chess_board[4][to_file] = EMPTY << IS_EMPTY_OFFSET;
+            chess_board[5][to_file] = 8*WHITE+PAWN;
+            return (to_file << 8) + 5;
+        }
+        /* black-side en passant */
+        else
+        {
+            chess_board[3][from_file] = EMPTY << IS_EMPTY_OFFSET;
+            chess_board[3][to_file] = EMPTY << IS_EMPTY_OFFSET;
+            chess_board[2][to_file] = 8*BLACK+PAWN;
+            return (to_file << 8) + 2;
+        }
+    }
+    break;
+    case PROMOTING:
+    {
+        uint8_t promote_to_piece = (move & PROMOTE_TO_MASK) >> PROMOTE_TO_OFFSET;
+        /* white promoting */
+        if (from_rank == 6)
+        {
+            switch (promote_to_piece)
+            {
+                case PROMOTE_TO_KNIGHT:
+                {
+                    chess_board[7][to_file] = 8*WHITE+KNIGHT;
+                }
+                break;
+                case PROMOTE_TO_BISHOP:
+                {
+                    chess_board[7][to_file] = 8*WHITE+BISHOP;
+                }
+                break;
+                case PROMOTE_TO_ROOK:
+                {
+                    chess_board[7][to_file] = 8*WHITE+ROOK;
+                }
+                break;
+                case PROMOTE_TO_QUEEN:
+                {
+                    chess_board[7][to_file] = 8*WHITE+QUEEN;
+                }
+                break;
+                default:
+                {
+                    /* nothing to do */
+                }
+            }
+            chess_board[6][from_file] = EMPTY << IS_EMPTY_OFFSET;
+            return (to_file << 8) + 7;
+        }
+        /* black promoting */
+        else
+        {
+            switch (promote_to_piece)
+            {
+                case PROMOTE_TO_KNIGHT:
+                {
+                    chess_board[0][to_file] = 8*BLACK+KNIGHT;
+                }
+                break;
+                case PROMOTE_TO_BISHOP:
+                {
+                    chess_board[0][to_file] = 8*BLACK+BISHOP;
+                }
+                break;
+                case PROMOTE_TO_ROOK:
+                {
+                    chess_board[0][to_file] = 8*BLACK+ROOK;
+                }
+                break;
+                case PROMOTE_TO_QUEEN:
+                {
+                    chess_board[0][to_file] = 8*BLACK+QUEEN;
+                }
+                break;
+                default:
+                {
+                    /* nothing to do */
+                }
+            }
+            chess_board[1][from_file] = EMPTY << IS_EMPTY_OFFSET;
+            return (to_file << 8) + 0;        }
+    }
+    break;
     default:
     {
         /* nothing to do */
     }
     break;
     }
+    return 0;
 }
 
 void WatchyChess::render_square(uint8_t file, uint8_t row)
