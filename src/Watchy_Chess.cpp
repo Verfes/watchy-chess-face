@@ -133,7 +133,7 @@ const Board reset_board = {
 };
 
 
-ChessMove moves[] = { 50956, 51508, 50502, 51897, 51269, 51130, 51873, 50526, 50891, 50916, 49540, 52541, 51010, 51451, 51933, 51956, 51907, 51953 };
+ChessMove moves[] = { 50956, 51508, 51021, 51044, 50821, 51195, 49476, 51313, 51290, 52094, 50502, 52191, 50379, 51693, 51157, 51631, 51551, 51890, 51086, 52071, 49543, 51306, 51151, 52134, 51679, 51630, 50499, 53165, 51010, 52070, 50305, 51389, 51410, 49773, 51933, 49570, 51484, 49161, 49925, 51769, 52645, 52988, 52053, 52094 };
 
 void WatchyChess::drawWatchFace()
 {
@@ -141,7 +141,7 @@ void WatchyChess::drawWatchFace()
     uint8_t last_rank;
     uint16_t temp;
 
-    if (currentTime.Minute % 18 == 0)
+    if (move_counter >= 44)
     {
         memcpy(chess_board, reset_board, 8 * 8);
         move_counter = 0;
@@ -180,7 +180,18 @@ void WatchyChess::drawWatchFace()
     }
     display.println(currentTime.Minute);
 
-    display.fillCircle(180, 20, 10, GxEPD_BLACK);
+    //display.fillCircle(180, 20, 10, GxEPD_BLACK);
+
+
+    // reset step counter at midnight
+    if (currentTime.Hour == 0 && currentTime.Minute == 0){
+      sensor.resetStepCounter();
+    }
+    uint32_t stepCount = sensor.getCounter();
+    display.setCursor(130, 190);
+    display.setFont(&DSEG7_Classic_Regular_15);
+    display.println(stepCount);
+
 
 }
 

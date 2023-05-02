@@ -110,7 +110,7 @@ vector<ChessMove> algebraic_to_moves(string game) {
 
 // Sample usage
 int main() {
-    string game = "e2e4 e7e5 g1f3 b8c6 f1b5 c8g4 b5c6 g4f3 d2d4 e5d4 e1g1 f8e7 c1f4 d8d5 f4d6 e7d6 d1d6 b7d6 b2b3 a8b8 c2c3 c7c5 b3c4 d5c4 d3c4 e8c8 c4c5 d6c5 c3c4 b8c8 a2a4 h7h5 h2h4 h8h7 h4h5 g7g5 h5g6 h7g6 f3g6 f7g6 f2f4 g6f5 e4f5 g8h8 f1e1 c8d8 e1e2 d8e8 e2d3 e8d8 c4c5 d8d7 c5c6 d7d6 c6c7 d6d5 c7c8q";
+    string game = "e2e4 e7e5 f2f4 e5f4 f1c4 d8h4 e1f1 b7b5 c4b5 g8f6 g1f3 h4h6 d2d3 f6h5 f3h4 h6g5 h4f5 c7c6 g2g4 h5f6 h1g1 c6b5 h2h4 g5g6 h4h5 g6g5 d1f3 f6g8 c1f4 g5f6 b1c3 f8c5 c3d5 f6b2 f4d6 c5g1 e4e5 b2a1 f1e2 b8a6 f5g7 e8d8 f3f6 g8f6 d6e7";
 
     vector<ChessMove> moves = algebraic_to_moves(game);
 
